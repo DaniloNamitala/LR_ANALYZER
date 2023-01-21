@@ -18,9 +18,6 @@ private:
   _GLC dataSet;
   std::string initialSymbol;
 
-  bool isVariable(std::string str);
-  bool isValidRule(std::string str);
-  bool isTerminal(std::string str);
   void readDataFromFile(char* fileName);
   
   std::vector<std::string> findNullables();
@@ -32,5 +29,6 @@ private:
   void extend();
 public:
   GLC(char* fileName); // create GLC from file
+  std::vector<std::string> getRules(std::string variable);
 };
 #endif

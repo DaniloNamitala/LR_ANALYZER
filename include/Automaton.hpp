@@ -8,10 +8,10 @@
 
 class LRItem {
 private:
-  GlcRule rule;
+  ItemRule rule;
   int position;
 public: 
-  LRItem(GlcRule rule);
+  LRItem(ItemRule rule);
 
   // return the next symbol
   std::string nextSymbol();
@@ -21,12 +21,19 @@ public:
 
   // true if item can be reduced
   bool reducible();
+
+  bool operator==(const LRItem& second);
 };
 
-struct State {
+class State {
+private:
   int id;
   std::vector<LRItem> items;
   std::map<std::string, State*> transitions;
+public:
+  State(int id = -1);
+  void addItem(LRItem item);
+  void addTransition(std::string c, State* state);
 };
 
 class Automaton {
@@ -40,6 +47,8 @@ class Automaton {
 
     // create LR automaton from grammar file
     Automaton(char* filename);
+
+    State* createState(LRItem item);
 };
 
 #endif

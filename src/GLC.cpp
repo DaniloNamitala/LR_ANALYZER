@@ -4,6 +4,7 @@ using namespace std;
 GLC::GLC(char* fileName) {
   initialSymbol = "S";
   readDataFromFile(fileName);
+  extend();
 }
 
 void GLC::readDataFromFile(char* fileName) {
@@ -31,20 +32,17 @@ void GLC::readDataFromFile(char* fileName) {
   file.close();
 }
 
-bool GLC::isVariable(string str) {
-  return regex_match(str, regex("[A-Z][1-9]*"));
-}
-
-bool GLC::isValidRule(string str) {
-  return regex_match(str, regex("(([A-Z][1-9]*)|[a-z])*|\\."));
-}
-
-bool GLC::isTerminal(string str) {
-  return regex_match(str, regex("[a-z]|\\."));
-}
-
 void GLC::extend(){
   string newInitial = "S'";
   dataSet[newInitial].push_back(initialSymbol);
   initialSymbol = newInitial;
+}
+
+vector<string> GLC::getRules(string variable) {
+  try {
+    return dataSet.at(variable);
+  } catch (std::out_of_range e) {
+    cerr << "CANT FIND VARIABLE " << variable << " RULE";
+    return vector<string>();
+  }
 }
