@@ -1,1 +1,2 @@
-S -> aSb | ab
+S -> Aa | bAc | dc | dba
+A -> d

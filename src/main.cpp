@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../include/GLC.hpp"
+#include "../include/Automaton.hpp"
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -15,5 +15,10 @@ int main(int argc, char** argv) {
 
   char* input_file = argv[1];
   char* output_file = argv[2];
+
+  
+  Automaton autom(input_file);
+  autom.generate();
+  autom.print();
   return 0;
 }

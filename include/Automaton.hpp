@@ -1,7 +1,8 @@
-#include <iostream>
+#include <ostream>
 #include <vector>
 #include "types.hpp"
 #include "GLC.hpp"
+#include <queue>
 
 #ifndef _AUTOMATON_STATE
 #define _AUTOMATON_STATE
@@ -17,15 +18,19 @@ public:
   std::string nextSymbol();
   
   // return rule after read the symbol
-  LRItem readSymbol();
+  LRItem* readSymbol();
 
   // true if item can be reduced
   bool reducible();
 
   bool operator==(const LRItem& second);
+
+  friend std::ostream& operator<<(std::ostream& out, LRItem &i);
 };
 
+class Automaton;
 class State {
+  friend class Automaton;
 private:
   int id;
   std::vector<LRItem> items;
@@ -34,6 +39,7 @@ public:
   State(int id = -1);
   void addItem(LRItem item);
   void addTransition(std::string c, State* state);
+  friend std::ostream& operator<<(std::ostream& out, State &s);
 };
 
 class Automaton {
@@ -48,7 +54,12 @@ class Automaton {
     // create LR automaton from grammar file
     Automaton(char* filename);
 
+    // create a new state
     State* createState(LRItem item);
+
+    State* generate();
+
+    void print();
 };
 
 #endif

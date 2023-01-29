@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <regex>
 
 #ifndef TYPES
 #define TYPES
@@ -13,23 +14,12 @@ typedef std::map<std::string, std::vector<std::string>> _GLC; // GLC data, rules
 
 typedef std::pair<std::string, std::string> ItemRule;
 
-std::string charToStr(char v) {
-  std::string aux = "";
-  aux += v;
-  return aux;
-}
+std::string charToStr(char v);
 
+bool isVariable(std::string str);
 
-bool isVariable(string str) {
-  return regex_match(str, regex("[A-Z][1-9]*"));
-}
+bool isValidRule(std::string str);
 
-bool isValidRule(string str) {
-  return regex_match(str, regex("(([A-Z][1-9]*)|[a-z])*|\\."));
-}
-
-bool isTerminal(string str) {
-  return regex_match(str, regex("[a-z]|\\."));
-}
+bool isTerminal(std::string str);
 
 #endif

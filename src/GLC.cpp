@@ -38,11 +38,27 @@ void GLC::extend(){
   initialSymbol = newInitial;
 }
 
+pair<string, string> GLC::getInitialRule() {
+  return pair<string, string>(initialSymbol, dataSet.at(initialSymbol).at(0));
+}
+
 vector<string> GLC::getRules(string variable) {
   try {
     return dataSet.at(variable);
   } catch (std::out_of_range e) {
-    cerr << "CANT FIND VARIABLE " << variable << " RULE";
+    cerr << "CANT FIND VARIABLE " << variable << " RULE\n";
     return vector<string>();
   }
+}
+
+ostream& operator<<(ostream& out, GLC &g) {
+    for (_GLC::reference v : g.dataSet) {
+      out << v.first << " -> ";
+      for (int i = 0; i < v.second.size(); i++) {
+        out << v.second[i];
+        if (i < v.second.size()-1) out << " | ";
+      }
+      out << "\n";
+    }
+    return out;
 }

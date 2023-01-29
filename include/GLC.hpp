@@ -29,6 +29,11 @@ private:
   void extend();
 public:
   GLC(char* fileName); // create GLC from file
+
+  std::pair<std::string, std::string> getInitialRule();
+
   std::vector<std::string> getRules(std::string variable);
+
+  friend std::ostream& operator<<(std::ostream& out, GLC &g);
 };
 #endif
