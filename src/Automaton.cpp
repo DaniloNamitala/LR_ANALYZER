@@ -107,6 +107,7 @@ State* Automaton::generate() {
 
   while (!statesQueue.empty()) {
     State* actual = statesQueue.front(); statesQueue.pop();
+    if (find(states.begin(), states.end(), actual) == states.end()) continue;
     for (LRItem item: actual->items) {
       string symbol = item.nextSymbol();
       LRItem* i = item.readSymbol();
@@ -138,6 +139,10 @@ State* Automaton::generate() {
             }
             pos++;
           } while (newItems != 0 and pos < state->items.size());
+          if (*state == *actual) {
+            actual->transitions.at(symbol) = actual;
+            states.erase(find(states.begin(), states.end(), state));
+          }
         }
       }
     }
