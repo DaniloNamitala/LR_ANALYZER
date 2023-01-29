@@ -30,6 +30,13 @@ bool LRItem::operator==(const LRItem& second) {
   return this->position == second.position && this->rule == second.rule;
 }
 
+bool operator!=(const LRItem& i, const LRItem& j) {
+  if(i.rule == j.rule && i.position == j.position) {
+    return false;
+  }
+  return true;
+}
+
 State::State(int id) {
   this->id = id == -1 ? 0 : id;
 }
@@ -71,6 +78,18 @@ ostream& operator<<(ostream& out, LRItem &i) {
   return out;
 }
 
+bool operator==(const State &i, const State &j) {
+  if (i.items.size() != j.items.size()) {
+    return false;
+  }
+  for (int k = 0; k < i.items.size(); k++) {
+    if (i.items[k] != j.items[k]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 Automaton::Automaton(GLC* grammar) {
   this->grammar = grammar;
 }
@@ -94,9 +113,13 @@ State* Automaton::generate() {
       if (i != NULL) {
         if (actual->transitions.find(symbol) == actual->transitions.end()) {
           State* state = createState(*i);
-          actual->addTransition(symbol, state);
-          statesQueue.push(state);
-          states.push_back(state);
+          if(state == actual){
+            actual->addTransition(symbol, actual);
+          }else{
+            actual->addTransition(symbol, state);
+            statesQueue.push(state);
+            states.push_back(state);
+          }
         } else {
           State* state = actual->transitions.at(symbol);
           state->addItem(*i);

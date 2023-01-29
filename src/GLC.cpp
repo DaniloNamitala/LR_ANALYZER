@@ -1,4 +1,5 @@
 #include "../include/GLC.hpp"
+#include <sstream>
 using namespace std;
 
 GLC::GLC(char* fileName) {

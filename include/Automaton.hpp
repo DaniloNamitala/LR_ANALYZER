@@ -24,6 +24,7 @@ public:
   bool reducible();
 
   bool operator==(const LRItem& second);
+  friend bool operator!=(const LRItem& i, const LRItem& j);
 
   friend std::ostream& operator<<(std::ostream& out, LRItem &i);
 };
@@ -40,6 +41,7 @@ public:
   void addItem(LRItem item);
   void addTransition(std::string c, State* state);
   friend std::ostream& operator<<(std::ostream& out, State &s);
+  friend bool operator==(const State &i, const State &j);
 };
 
 class Automaton {
