@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../include/Automaton.hpp"
+#include "../include/ParsingTable.hpp"
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -20,5 +21,8 @@ int main(int argc, char** argv) {
   Automaton autom(input_file);
   autom.generate();
   autom.print();
+
+  ParsingTable table(&autom);
+  table.print();
   return 0;
 }

@@ -114,13 +114,9 @@ State* Automaton::generate() {
       if (i != NULL) {
         if (actual->transitions.find(symbol) == actual->transitions.end()) {
           State* state = createState(*i);
-          if(state == actual){
-            actual->addTransition(symbol, actual);
-          }else{
-            actual->addTransition(symbol, state);
-            statesQueue.push(state);
-            states.push_back(state);
-          }
+          actual->addTransition(symbol, state);
+          statesQueue.push(state);
+          states.push_back(state);
         } else {
           State* state = actual->transitions.at(symbol);
           state->addItem(*i);

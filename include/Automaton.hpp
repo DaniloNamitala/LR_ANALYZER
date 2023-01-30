@@ -8,6 +8,7 @@
 #define _AUTOMATON_STATE
 
 class LRItem {
+  friend class ParsingTable;
 private:
   ItemRule rule;
   int position;
@@ -32,6 +33,7 @@ public:
 class Automaton;
 class State {
   friend class Automaton;
+  friend class ParsingTable;
 private:
   int id;
   std::vector<LRItem> items;
@@ -45,6 +47,7 @@ public:
 };
 
 class Automaton {
+  friend class ParsingTable;
   private:
     std::vector<State*> states;
     int statesCount;
