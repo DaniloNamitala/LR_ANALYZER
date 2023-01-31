@@ -112,13 +112,14 @@ State* Automaton::generate() {
       string symbol = item.nextSymbol();
       LRItem* i = item.readSymbol();
       if (i != NULL) {
+        State* state = NULL;
         if (actual->transitions.find(symbol) == actual->transitions.end()) {
-          State* state = createState(*i);
+          state = createState(*i);
           actual->addTransition(symbol, state);
           statesQueue.push(state);
           states.push_back(state);
         } else {
-          State* state = actual->transitions.at(symbol);
+          state = actual->transitions.at(symbol);
           state->addItem(*i);
           int newItems = 0;
           int pos = 0;
@@ -135,8 +136,10 @@ State* Automaton::generate() {
             }
             pos++;
           } while (newItems != 0 and pos < state->items.size());
-          if (*state == *actual) {
-            actual->transitions.at(symbol) = actual;
+        }
+        for (State* s: states) {
+          if (*s == *state && s != state) {
+            actual->transitions.at(symbol) = s;
             states.erase(find(states.begin(), states.end(), state));
           }
         }
