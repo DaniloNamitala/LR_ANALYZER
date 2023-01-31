@@ -1,28 +1,6 @@
 #include "../include/ParsingTable.hpp" 
 using namespace std;
 
-ParsingTable::ParsingTable(Automaton* automaton) {
-  for (State* state: automaton->states) {
-    for (LRItem item: state->items) {
-      if (item.reducible()) {
-        if(item.rule.first == "S'"){
-          table[state->id]["$"] = "acc";
-        }
-        else{
-          if(isVariable(item.rule.first)){
-            table[state->id][item.rule.first] = item.position;
-          }else{
-            table[state->id][item.rule.first] = "r" + item.rule.first;
-          }
-        }
-      }
-      else if (state->transitions.find(item.nextSymbol()) != state->transitions.end()){
-        table[state->id][item.nextSymbol()] = "s" + to_string(state->transitions[item.nextSymbol()]->id);
-      }
-    }
-  }
-}
-
 int ParsingTable::getIndex(vector<string> v, string K)
 {
   auto it = find(v.begin(), v.end(), K);
@@ -33,6 +11,30 @@ int ParsingTable::getIndex(vector<string> v, string K)
     return -1;
   }
 }
+
+ParsingTable::ParsingTable(Automaton* automaton) {
+  for (State* state: automaton->states) {
+    for (LRItem item: state->items) {
+      if (item.reducible()) {
+        if(item.rule.first == "S'"){
+          table[state->id]["$"] = "acc";
+        }else{
+          string rule = "r"; 
+          auto rules = automaton->grammar->getRules(item.rule.first);
+          int ruleIndex = getIndex(rules, item.rule.second);
+          table[state->id][item.rule.first] = "r" + to_string(ruleIndex + 1);
+        }
+      }else if (state->transitions.find(item.nextSymbol()) !=         state->transitions.end()){
+        if(isVariable(item.nextSymbol())){
+          table[state->id][item.nextSymbol()] = to_string(state->transitions[item.nextSymbol()]->id);
+        }else{
+          table[state->id][item.nextSymbol()] = "s" + to_string(state->transitions[item.nextSymbol()]->id);
+        }
+     }
+  }
+  }
+}
+
 
 void ParsingTable::print() {
   vector<string> v; 
@@ -50,25 +52,34 @@ void ParsingTable::print() {
     }
   }
 
-  for(auto column: columns){
-    cout << "     " << column;
-    v.push_back("     |");
+  sort(columns.begin(), columns.end(), greater<string>());
+
+  for(string column: columns){
+    printf("%10s|", column.c_str());
+    v.push_back("");
   }
 
   cout << endl;
   for(auto i: table){
-    cout << i.first << "    ";
+    printf("%d", i.first);
+
     for(auto j: i.second){
       int index = getIndex(columns,j.first);
       if(j.second == "acc"){
-        v[index] = "acc  |";
+        v[index] = "acc";
+      }else if(j.second[0] == 'r' && j.first != "S'"){
+        for(int k = 0; k < columns.size(); k++){
+          if(k != index && !isVariable(columns[k])){
+            v[k] = j.second;
+          }
+        }
       }else{
-        v[index] = j.second + "   |";
+        v[index] = j.second;
       }
     }
     for(int k = 0; k < columns.size(); k++){
-      cout << v[k];
-      v[k] = "     |";
+      printf("%10s|",v[k].c_str());
+      v[k] = "";
     }
     cout << endl;
   }
