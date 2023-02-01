@@ -26,6 +26,8 @@ public:
   bool reducible();
 
   void setLookAhead(std::vector<std::string> lookAhead);
+  
+  std::vector<std::string> calculateLookAheadForNext(GLC* grammar);
 
   bool operator==(const LRItem& second);
   friend bool operator!=(const LRItem& i, const LRItem& j);
@@ -52,7 +54,7 @@ class Automaton {
   friend class ParsingTable;
   private:
     std::vector<State*> states;
-    int statesCount;
+    bool isCLR1;
     GLC* grammar; 
   public:
     // create LR automaton from grammar
@@ -65,6 +67,12 @@ class Automaton {
     State* createState(LRItem item);
 
     State* generate();
+
+    void setClr1(bool value);
+
+    State* populateState(State* state);
+
+    bool isClr1();
 
     void print();
 };

@@ -3,10 +3,26 @@
 using namespace std;
 
 bool LRItem::operator==(const LRItem& second) {
+  if (isCLR1) {
+    if (lookAhead.size() != second.lookAhead.size()) return false;
+    for (int k = 0; k < lookAhead.size(); k++) {
+      if (lookAhead[k] != second.lookAhead[k]) {
+        return false;
+      }
+    }
+  }
   return this->position == second.position && this->rule == second.rule;
 }
 
 bool operator!=(const LRItem& i, const LRItem& j) {
+  if (isCLR1) {
+    if (i.lookAhead.size() != j.lookAhead.size()) return true;
+    for (int k = 0; k < i.lookAhead.size(); k++) {
+      if (i.lookAhead[k] != j.lookAhead[k]) {
+        return true;
+      }
+    }
+  }
   if(i.rule == j.rule && i.position == j.position) {
     return false;
   }
@@ -48,6 +64,15 @@ ostream& operator<<(ostream& out, LRItem &i) {
   }
   if (i.position == i.rule.second.size()) {
     out << POINTER;
+  }
+  if (isCLR1) {
+    out << ";";
+    for (int k=0; k < i.lookAhead.size(); k++) {
+      out << i.lookAhead[k];
+      if (k < i.lookAhead.size()-1) {
+        out << "|";
+      }
+    }
   }
   return out;
 }

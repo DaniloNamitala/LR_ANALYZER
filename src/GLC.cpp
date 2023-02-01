@@ -62,16 +62,15 @@ vector<string> removeDuplicates(vector<string> v) {
 vector<string> GLC::getSetOfFirst(string variable){
   vector<string> firsts;
 
-  for (string r : dataSet[variable]) {
-      if (isTerminal(charToStr(r[0]))) {
-        firsts.push_back(string(1, r[0]));
-        return firsts;
-      } else if(isVariable(charToStr(r[0]))) {
-        vector<string> firstsOfVar = getSetOfFirst(charToStr(r[0]));
-        firsts.insert(firsts.end(), firstsOfVar.begin(), firstsOfVar.end());
-      } else {
-        throw runtime_error("INVALID RULE\n");
-      }
+  for (string r : getRules(variable)) {
+    if (isTerminal(charToStr(r[0]))) {
+      firsts.push_back(string(1, r[0]));
+    } else if(isVariable(charToStr(r[0]))) {
+      vector<string> firstsOfVar = getSetOfFirst(charToStr(r[0]));
+      firsts.insert(firsts.end(), firstsOfVar.begin(), firstsOfVar.end());
+    } else {
+      throw runtime_error("INVALID RULE\n");
+    }
   }
   firsts = removeDuplicates(firsts);
   return firsts;

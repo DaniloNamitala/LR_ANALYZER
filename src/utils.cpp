@@ -4,7 +4,6 @@ std::string charToStr(char v) {
   return std::string(1, v);
 }
 
-
 bool isVariable(std::string str) {
   return std::regex_match(str, std::regex("[A-Z][1-9]*"));
 }
