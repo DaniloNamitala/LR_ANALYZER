@@ -1,2 +1,5 @@
-S -> AA
-A -> aA | b
+S -> TY
+Y -> cTY | .
+T -> FX
+X -> dFX | .
+F -> aSb | id
