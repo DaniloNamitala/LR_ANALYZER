@@ -1,5 +1,6 @@
 #include "../include/GLC.hpp"
 #include <sstream>
+#include <unordered_set>
 using namespace std;
 
 GLC::GLC(char* fileName) {
@@ -62,4 +63,33 @@ ostream& operator<<(ostream& out, GLC &g) {
       out << "\n";
     }
     return out;
+}
+
+vector<string> removeDuplicates(vector<string> v) {
+  sort(v.begin(), v.end());
+  v.erase(unique(v.begin(), v.end()), v.end());
+  return v;
+}
+
+vector<string> GLC::getSetOfFirst(string variable){
+  vector<string> firsts;
+  
+  for (_GLC::reference rule : dataSet) {
+    if (rule.first == variable) {
+      for (string r : rule.second) {
+          if (isTerminal(charToStr(r[0]))) {
+            firsts.push_back(string(1, r[0]));
+            break;
+          } else if(isVariable(charToStr(r[0]))) {
+            vector<string> firstsOfVar = getSetOfFirst(charToStr(r[0]));
+            firsts.insert(firsts.end(), firstsOfVar.begin(), firstsOfVar.end());
+          } else {
+            throw runtime_error("INVALID RULE\n");
+          }
+      }
+    }
+  }
+  firsts = removeDuplicates(firsts);
+  
+  return firsts;
 }

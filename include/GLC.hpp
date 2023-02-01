@@ -35,5 +35,9 @@ public:
   std::vector<std::string> getRules(std::string variable);
 
   friend std::ostream& operator<<(std::ostream& out, GLC &g);
+
+  std::vector<std::string> getSetOfFirst(std::string var);
+
+  std::vector<std::string> getSetOfFollowers(std::string var);
 };
 #endif
