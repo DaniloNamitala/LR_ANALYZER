@@ -38,6 +38,6 @@ public:
 
   std::vector<std::string> getSetOfFirst(std::string var);
 
-  std::vector<std::string> getSetOfFollowers(std::string var);
+  std::vector<std::string> getSetOfFollow(std::string var);
 };
 #endif
