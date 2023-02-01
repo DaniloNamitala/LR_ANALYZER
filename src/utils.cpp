@@ -14,5 +14,5 @@ bool isValidRule(std::string str) {
 }
 
 bool isTerminal(std::string str) {
-  return std::regex_match(str, std::regex("[a-z]|\\."));
+  return std::regex_match(str, std::regex("[a-z]|\\.|$"));
 }

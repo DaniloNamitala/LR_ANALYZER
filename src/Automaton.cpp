@@ -3,6 +3,7 @@ using namespace std;
 
 LRItem::LRItem(ItemRule rule) {
   this->rule = rule;
+  lookAhead.clear();
   position = 0;
 }
 
@@ -26,15 +27,8 @@ bool LRItem::reducible() {
   return position == rule.second.size();
 }
 
-bool LRItem::operator==(const LRItem& second) {
-  return this->position == second.position && this->rule == second.rule;
-}
-
-bool operator!=(const LRItem& i, const LRItem& j) {
-  if(i.rule == j.rule && i.position == j.position) {
-    return false;
-  }
-  return true;
+void LRItem::setLookAhead(std::vector<std::string> lookAhead) {
+  this->lookAhead = lookAhead;
 }
 
 State::State(int id) {
@@ -49,45 +43,6 @@ void State::addItem(LRItem item) {
 
 void State::addTransition(std::string c, State* state) {
   transitions[c] = state;
-}
-
-ostream& operator<<(ostream& out, State &s) {
-  out << "State ----------- " << s.id << "\n";
-  out << "ITEMS:\n";
-  for (LRItem i: s.items) {
-    out << "<" << i << ">\n";
-  }
-  out << "TRANSITIONS:\n";
-  for (pair<string, State*> t: s.transitions) {
-    out << t.first << " -> " << t.second->id << "\n";
-  }
-  return out;
-}
-
-ostream& operator<<(ostream& out, LRItem &i) {
-  out << i.rule.first << " -> ";
-  for (int k = 0; k < i.rule.second.size(); k++) {
-    if (k == i.position) {
-      out << POINTER;
-    }
-    out << i.rule.second[k];
-  }
-  if (i.position == i.rule.second.size()) {
-    out << POINTER;
-  }
-  return out;
-}
-
-bool operator==(const State &i, const State &j) {
-  if (i.items.size() != j.items.size()) {
-    return false;
-  }
-  for (int k = 0; k < i.items.size(); k++) {
-    if (i.items[k] != j.items[k]) {
-      return false;
-    }
-  }
-  return true;
 }
 
 Automaton::Automaton(GLC* grammar) {

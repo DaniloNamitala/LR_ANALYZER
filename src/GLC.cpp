@@ -53,18 +53,6 @@ vector<string> GLC::getRules(string variable) {
   }
 }
 
-ostream& operator<<(ostream& out, GLC &g) {
-    for (_GLC::reference v : g.dataSet) {
-      out << v.first << " -> ";
-      for (int i = 0; i < v.second.size(); i++) {
-        out << v.second[i];
-        if (i < v.second.size()-1) out << " | ";
-      }
-      out << "\n";
-    }
-    return out;
-}
-
 vector<string> removeDuplicates(vector<string> v) {
   sort(v.begin(), v.end());
   v.erase(unique(v.begin(), v.end()), v.end());
@@ -73,23 +61,18 @@ vector<string> removeDuplicates(vector<string> v) {
 
 vector<string> GLC::getSetOfFirst(string variable){
   vector<string> firsts;
-  
-  for (_GLC::reference rule : dataSet) {
-    if (rule.first == variable) {
-      for (string r : rule.second) {
-          if (isTerminal(charToStr(r[0]))) {
-            firsts.push_back(string(1, r[0]));
-            break;
-          } else if(isVariable(charToStr(r[0]))) {
-            vector<string> firstsOfVar = getSetOfFirst(charToStr(r[0]));
-            firsts.insert(firsts.end(), firstsOfVar.begin(), firstsOfVar.end());
-          } else {
-            throw runtime_error("INVALID RULE\n");
-          }
+
+  for (string r : dataSet[variable]) {
+      if (isTerminal(charToStr(r[0]))) {
+        firsts.push_back(string(1, r[0]));
+        return firsts;
+      } else if(isVariable(charToStr(r[0]))) {
+        vector<string> firstsOfVar = getSetOfFirst(charToStr(r[0]));
+        firsts.insert(firsts.end(), firstsOfVar.begin(), firstsOfVar.end());
+      } else {
+        throw runtime_error("INVALID RULE\n");
       }
-    }
   }
   firsts = removeDuplicates(firsts);
-  
   return firsts;
 }

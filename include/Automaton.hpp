@@ -11,6 +11,7 @@ class LRItem {
   friend class ParsingTable;
 private:
   ItemRule rule;
+  std::vector<std::string> lookAhead;
   int position;
 public: 
   LRItem(ItemRule rule);
@@ -24,9 +25,10 @@ public:
   // true if item can be reduced
   bool reducible();
 
+  void setLookAhead(std::vector<std::string> lookAhead);
+
   bool operator==(const LRItem& second);
   friend bool operator!=(const LRItem& i, const LRItem& j);
-
   friend std::ostream& operator<<(std::ostream& out, LRItem &i);
 };
 
