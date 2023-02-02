@@ -35,8 +35,18 @@ ParsingTable::ParsingTable(Automaton* automaton) {
   }
 }
 
+vector<string> ParsingTable::getReducibleColumns(vector<string> v, vector<string> columns, string j, int index, bool isSrl, bool isCrl ) {
+  vector<string> values = v;
 
-void ParsingTable::print() {
+  for(int k = 0; k < v.size(); k++){
+    if(k != index && !isVariable(columns[k])){
+      values[k] = j;
+    }
+  }
+  return values;
+}
+
+void ParsingTable::print(Automaton* autom) {
   vector<string> v; 
   vector<string> columns;
 
@@ -68,11 +78,7 @@ void ParsingTable::print() {
       if(j.second == "acc"){
         v[index] = "acc";
       }else if(j.second[0] == 'r' && j.first != "S'"){
-        for(int k = 0; k < columns.size(); k++){
-          if(k != index && !isVariable(columns[k])){
-            v[k] = j.second;
-          }
-        }
+        v = getReducibleColumns(v, columns,j.second, index, autom->isSlr1(), autom->isClr1());
       }else{
         v[index] = j.second;
       }

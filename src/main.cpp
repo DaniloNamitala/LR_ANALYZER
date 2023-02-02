@@ -23,6 +23,6 @@ int main(int argc, char** argv) {
   autom.print();
 
   ParsingTable table(&autom);
-  table.print();
+  table.print(&autom);
   return 0;
 }
