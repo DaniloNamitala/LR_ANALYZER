@@ -35,12 +35,12 @@ ParsingTable::ParsingTable(Automaton* automaton) {
   }
 }
 
-vector<string> ParsingTable::getReducibleColumns(GLC* grammar,vector<string> v, vector<string> columns, string j, int index, bool isSrl1, bool isCrl1 ) {
+vector<string> ParsingTable::getReducibleColumns(Automaton *autom,vector<string> v, vector<string> columns, string j, int index ) {
   vector<string> values = v;
   vector<string> listOfFollow;
 
-  if(isSrl1){
-    listOfFollow = grammar->getSetOfFollow(columns[index]);
+  if(autom->isSLR1){
+    listOfFollow = autom->grammar->getSetOfFollow(columns[index]);
     for (auto i : listOfFollow)
     {
       int index = getIndex(columns, i);
@@ -93,7 +93,7 @@ void ParsingTable::print(Automaton* autom) {
       if(j.second == "acc"){
         v[index] = "acc";
       }else if(j.second[0] == 'r' && j.first != "S'"){
-        v = getReducibleColumns(autom->grammar, v, columns,j.second, index, autom->isSLR1, autom->isCLR1);
+        v = getReducibleColumns(autom, v, columns,j.second, index);
       }else{
         v[index] = j.second;
       }

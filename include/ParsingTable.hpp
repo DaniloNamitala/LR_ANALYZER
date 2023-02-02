@@ -9,5 +9,5 @@ class ParsingTable {
     ParsingTable(Automaton* automaton);
     void print(Automaton* automaton);
     int getIndex(std::vector<std::string> v, std::string K);
-    std::vector<std::string> getReducibleColumns(GLC* grammar,std::vector<std::string> v, std::vector <std::string> columns, std::string j, int index, bool isSrl1, bool isCrl1);
+    std::vector<std::string> getReducibleColumns(Automaton* autom,std::vector<std::string> v, std::vector <std::string> columns, std::string j, int index);
 };
