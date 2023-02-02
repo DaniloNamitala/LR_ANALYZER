@@ -55,6 +55,7 @@ class Automaton {
   private:
     std::vector<State*> states;
     bool isCLR1;
+    bool isSLR1;
     GLC* grammar; 
   public:
     // create LR automaton from grammar
@@ -70,9 +71,15 @@ class Automaton {
 
     void setClr1(bool value);
 
+    void setSlr1(bool value);
+
     State* populateState(State* state);
 
+    void verifyState(State* state);
+
     bool isClr1();
+
+    bool isSlr1();
 
     void print();
 };

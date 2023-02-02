@@ -1,4 +1,5 @@
 #include "../include/Automaton.hpp"
+#include "../include/types.hpp"
 using namespace std;
 
 LRItem::LRItem(ItemRule rule) {
@@ -61,6 +62,7 @@ void State::addTransition(std::string c, State* state) {
 }
 
 Automaton::Automaton(GLC* grammar) {
+  isSLR1 = false;
   isCLR1 = false;
   this->grammar = grammar;
 }
@@ -74,8 +76,16 @@ void Automaton::setClr1(bool value) {
   isCLR1 = value;
 }
 
- bool Automaton::isClr1() {
+bool Automaton::isClr1() {
   return isCLR1;
+}
+
+void Automaton::setSlr1(bool value) {
+  isSLR1 = value;
+}
+
+bool Automaton::isSlr1() {
+  return isSLR1;
 }
 
 State* Automaton::generate() {
@@ -105,6 +115,7 @@ State* Automaton::generate() {
           state->addItem(*i);
           populateState(state);
         }
+        verifyState(state);
         for (State* s: states) {
           if (*s == *state && s != state) {
             actual->transitions.at(symbol) = s;
@@ -143,6 +154,21 @@ State* Automaton::populateState(State* state) {
     pos++;
   } while (newItems != 0 and pos < state->items.size());
   return state;
+}
+
+void Automaton::verifyState(State* state ) {
+  bool reducible = false;
+  bool shift = false;
+
+  for (LRItem item: state->items) {
+    if (item.reducible() && reducible || item.reducible() && shift || shift && reducible) {
+     setSlr1(true);  
+    }else if(item.reducible()){
+      reducible = true;
+    }else {
+      shift = true;
+    }
+  }
 }
 
 State* Automaton::createState(LRItem item) {
