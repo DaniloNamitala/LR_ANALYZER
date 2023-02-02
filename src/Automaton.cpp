@@ -62,8 +62,6 @@ void State::addTransition(std::string c, State* state) {
 }
 
 Automaton::Automaton(GLC* grammar) {
-  isSLR1 = false;
-  isCLR1 = false;
   this->grammar = grammar;
 }
 
@@ -76,16 +74,8 @@ void Automaton::setClr1(bool value) {
   isCLR1 = value;
 }
 
-bool Automaton::isClr1() {
-  return isCLR1;
-}
-
 void Automaton::setSlr1(bool value) {
   isSLR1 = value;
-}
-
-bool Automaton::isSlr1() {
-  return isSLR1;
 }
 
 State* Automaton::generate() {
@@ -161,8 +151,8 @@ void Automaton::verifyState(State* state ) {
   bool shift = false;
 
   for (LRItem item: state->items) {
-    if (item.reducible() && reducible || item.reducible() && shift || shift && reducible) {
-     setSlr1(true);  
+    if (item.reducible() && reducible || item.reducible() && shift || shift && reducible) { 
+      setSlr1(true);
     }else if(item.reducible()){
       reducible = true;
     }else {

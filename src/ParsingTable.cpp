@@ -35,12 +35,24 @@ ParsingTable::ParsingTable(Automaton* automaton) {
   }
 }
 
-vector<string> ParsingTable::getReducibleColumns(vector<string> v, vector<string> columns, string j, int index, bool isSrl, bool isCrl ) {
+vector<string> ParsingTable::getReducibleColumns(GLC* grammar,vector<string> v, vector<string> columns, string j, int index, bool isSrl1, bool isCrl1 ) {
   vector<string> values = v;
+  vector<string> listOfFollow;
 
-  for(int k = 0; k < v.size(); k++){
-    if(k != index && !isVariable(columns[k])){
-      values[k] = j;
+  if(isSrl1){
+    listOfFollow = grammar->getSetOfFollow(columns[index]);
+    for (auto i : listOfFollow)
+    {
+      int index = getIndex(columns, i);
+      if(index != -1){
+        values[index] = j;
+      }
+    }    
+  }else{
+    for(int k = 0; k < v.size(); k++){
+      if(k != index && !isVariable(columns[k])){
+        values[k] = j;
+      }
     }
   }
   return values;
@@ -49,6 +61,9 @@ vector<string> ParsingTable::getReducibleColumns(vector<string> v, vector<string
 void ParsingTable::print(Automaton* autom) {
   vector<string> v; 
   vector<string> columns;
+
+  cout << "Parsing Table" << endl;
+  cout << "SRL1: " << autom->isSLR1 << endl;
 
   for(auto i: table){
     for(auto j: i.second){
@@ -78,7 +93,7 @@ void ParsingTable::print(Automaton* autom) {
       if(j.second == "acc"){
         v[index] = "acc";
       }else if(j.second[0] == 'r' && j.first != "S'"){
-        v = getReducibleColumns(v, columns,j.second, index, autom->isSlr1(), autom->isClr1());
+        v = getReducibleColumns(autom->grammar, v, columns,j.second, index, autom->isSLR1, autom->isCLR1);
       }else{
         v[index] = j.second;
       }
