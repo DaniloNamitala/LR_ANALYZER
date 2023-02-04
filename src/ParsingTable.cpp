@@ -54,19 +54,35 @@ void ParsingTable::print(Automaton* autom) {
     cout << "CLR(1)\n";
     break;
   default:
-    cout << "Maybe LALR(1)\n";
+    cerr << "TIPO DE GRAMATICA NAO SUPORTADA: LALR(1)\n";
+    return;
     break;
   }
 
-  printf("%3s", "");
+  printf("%-3s|", "");
   for (auto c: table[0]) {
-    printf("%5s", c.first.c_str());
+    if (isTerminal(c.first))
+      printf("%-5s|", c.first.c_str());
+  }
+  for (auto c: table[0]) {
+    if (!isTerminal(c.first))
+      printf("%-5s|", c.first.c_str());
+  }
+  printf("\n");
+  printf("----");
+  for (auto c: table[0]) {
+      printf("------");
   }
   printf("\n");
   for (auto l: table) {
-    printf("%3s", to_string(l.first).c_str());
+    printf("%-3s|", to_string(l.first).c_str());
     for (auto c: l.second) {
-      printf("%5s", c.second.c_str());
+      if (isTerminal(c.first))
+        printf("%-5s|", c.second.c_str());
+    }
+    for (auto c: l.second) {
+      if (!isTerminal(c.first))
+        printf("%-5s|", c.second.c_str());
     }
     printf("\n");
   }

@@ -23,6 +23,8 @@ bool isValidRule(std::string str);
 
 bool isTerminal(std::string str);
 
+int stringToType(std::string strType);
+
 enum {
   LR0 = 0,
   SLR1,

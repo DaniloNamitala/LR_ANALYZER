@@ -4,25 +4,21 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-  if (argc < 3) {
+  if (argc < 2) {
     cerr << "TOO FEW ARGUMENTS\n";
     return 1;
   }
-
-  bool verbose = false;
-  if (argc >= 4) {
-    verbose = argv[3][0] == 'v';
+  string type = "LR0";
+  if (argc > 2) {
+    type = argv[2];
   }
-
   char* input_file = argv[1];
-  char* output_file = argv[2];
 
-  
-  Automaton autom(input_file);
-  autom.generate();
+  Automaton autom(input_file, type);
+  autom.create();
   autom.print();
 
-  ParsingTable table(&autom, true);
-  table.print(&autom, true);
+  ParsingTable table(&autom);
+  table.print(&autom);
   return 0;
 }

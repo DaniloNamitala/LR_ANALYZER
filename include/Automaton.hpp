@@ -63,14 +63,16 @@ class Automaton {
     State* populateState(State* state);
     void verifyState(State* state);
     State* createState(LRItem item);
+    State* generate();
+    void clear();
   public:
     // create LR automaton from grammar
-    Automaton(GLC* grammar);
+    Automaton(GLC* grammar, std::string type = "LR0");
 
     // create LR automaton from grammar file
-    Automaton(char* filename);
+    Automaton(char* filename, std::string type = "LR0");
 
-    State* generate();
+    void create();
 
     void setType(int value);
 

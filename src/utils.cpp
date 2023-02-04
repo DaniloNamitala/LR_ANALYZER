@@ -15,3 +15,16 @@ bool isValidRule(std::string str) {
 bool isTerminal(std::string str) {
   return std::regex_match(str, std::regex("[a-z]|\\.|$|\\+"));
 }
+
+int stringToType(std::string strType) {
+  if (strType == "LR0") {
+    return LR0;
+  } else if (strType == "SLR1") {
+    return SLR1;
+  } else if (strType == "CLR1") {
+    return CLR1;
+  } else if (strType == "LALR1") {
+    return LALR1;
+  }
+  return LR0;
+}
