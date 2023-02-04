@@ -1,0 +1,2 @@
+S -> Aa | bAc | dc | dba
+A -> d
