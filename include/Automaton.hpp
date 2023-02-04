@@ -7,14 +7,17 @@
 #ifndef _AUTOMATON_STATE
 #define _AUTOMATON_STATE
 
+class Automaton;
 class LRItem {
   friend class ParsingTable;
+  friend class Automaton;
 private:
+  bool isCLR1;
   ItemRule rule;
   std::vector<std::string> lookAhead;
   int position;
 public: 
-  LRItem(ItemRule rule);
+  LRItem(ItemRule rule, bool isCLR1 = false);
 
   // return the next symbol
   std::string nextSymbol();
@@ -25,7 +28,9 @@ public:
   // true if item can be reduced
   bool reducible();
 
-  void setLookAhead(std::vector<std::string> lookAhead);
+  void setLookAhead(std::vector<std::string> lookAhead, int type);
+
+  std::vector<std::string> getLookAhead();
   
   std::vector<std::string> calculateLookAheadForNext(GLC* grammar);
 
@@ -33,8 +38,6 @@ public:
   friend bool operator!=(const LRItem& i, const LRItem& j);
   friend std::ostream& operator<<(std::ostream& out, LRItem &i);
 };
-
-class Automaton;
 class State {
   friend class Automaton;
   friend class ParsingTable;
@@ -54,9 +57,12 @@ class Automaton {
   friend class ParsingTable;
   private:
     std::vector<State*> states;
-    bool isCLR1 = false;
-    bool isSLR1 = false;
+    int type;
     GLC* grammar; 
+
+    State* populateState(State* state);
+    void verifyState(State* state);
+    State* createState(LRItem item);
   public:
     // create LR automaton from grammar
     Automaton(GLC* grammar);
@@ -64,18 +70,9 @@ class Automaton {
     // create LR automaton from grammar file
     Automaton(char* filename);
 
-    // create a new state
-    State* createState(LRItem item);
-
     State* generate();
 
-    void setClr1(bool value);
-
-    void setSlr1(bool value);
-
-    State* populateState(State* state);
-
-    void verifyState(State* state);
+    void setType(int value);
 
     void print();
 };

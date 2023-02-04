@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
   autom.generate();
   autom.print();
 
-  ParsingTable table(&autom);
-  table.print(&autom);
+  ParsingTable table(&autom, true);
+  table.print(&autom, true);
   return 0;
 }

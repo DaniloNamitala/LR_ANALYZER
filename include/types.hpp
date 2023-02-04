@@ -10,7 +10,6 @@
  * string -> Vector<string>
  * V -> {regras}
  */
-static bool isCLR1 = false;
 
 typedef std::map<std::string, std::vector<std::string>> _GLC; // GLC data, rules and variables
 
@@ -23,5 +22,12 @@ bool isVariable(std::string str);
 bool isValidRule(std::string str);
 
 bool isTerminal(std::string str);
+
+enum {
+  LR0 = 0,
+  SLR1,
+  CLR1,
+  LALR1
+};
 
 #endif

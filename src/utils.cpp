@@ -9,9 +9,9 @@ bool isVariable(std::string str) {
 }
 
 bool isValidRule(std::string str) {
-  return std::regex_match(str, std::regex("(([A-Z][1-9]*)|[a-z])*|\\."));
+  return std::regex_match(str, std::regex("(([A-Z][1-9]*)|[a-z]|\\+)*|\\."));
 }
 
 bool isTerminal(std::string str) {
-  return std::regex_match(str, std::regex("[a-z]|\\.|$"));
+  return std::regex_match(str, std::regex("[a-z]|\\.|$|\\+"));
 }

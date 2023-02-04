@@ -2,8 +2,9 @@
 #include "../include/types.hpp"
 using namespace std;
 
-LRItem::LRItem(ItemRule rule) {
+LRItem::LRItem(ItemRule rule, bool isCLR1) {
   this->rule = rule;
+  this->isCLR1 = isCLR1;
   lookAhead.clear();
   position = 0;
 }
@@ -17,7 +18,7 @@ string LRItem::nextSymbol() {
 
 LRItem* LRItem::readSymbol() {
   if (this->position < rule.second.size()) {
-    LRItem* newItem = new LRItem(this->rule);
+    LRItem* newItem = new LRItem(this->rule, this->isCLR1);
     newItem->lookAhead = this->lookAhead;
     newItem->position = this->position + 1;
     return newItem;
@@ -29,9 +30,13 @@ bool LRItem::reducible() {
   return position == rule.second.size();
 }
 
-void LRItem::setLookAhead(vector<string> lookAhead) {
-  if (isCLR1)
+void LRItem::setLookAhead(vector<string> lookAhead, int type) {
+  if (type == CLR1)
     this->lookAhead = lookAhead;
+}
+
+vector<string> LRItem::getLookAhead() {
+  return this->lookAhead;
 }
 
 vector<string> LRItem::calculateLookAheadForNext(GLC* grammar) {
@@ -62,27 +67,24 @@ void State::addTransition(std::string c, State* state) {
 }
 
 Automaton::Automaton(GLC* grammar) {
+  type = LR0;
   this->grammar = grammar;
 }
 
 Automaton::Automaton(char* filename) {
-  isCLR1 = false;
+  type = LR0;
   this->grammar = new GLC(filename);
 }
 
-void Automaton::setClr1(bool value) {
-  isCLR1 = value;
-}
-
-void Automaton::setSlr1(bool value) {
-  isSLR1 = value;
+void Automaton::setType(int value) {
+  type = value;
 }
 
 State* Automaton::generate() {
   cout << *this->grammar << endl;
   queue<State*> statesQueue;
-  LRItem firstItem = LRItem(grammar->getInitialRule());
-  firstItem.setLookAhead(vector<string>({"$"}));
+  LRItem firstItem = LRItem(grammar->getInitialRule(), type == CLR1);
+  firstItem.setLookAhead(vector<string>({"$"}), type);
   State* firstState = createState(firstItem);
   states.push_back(firstState);
   statesQueue.push(firstState);
@@ -135,8 +137,8 @@ State* Automaton::populateState(State* state) {
     if (isVariable(nextSymbol)) {
       vector<string> rules = grammar->getRules(nextSymbol);
       for (string rule : rules) {
-        LRItem newItem = LRItem(ItemRule(nextSymbol, rule));
-        newItem.setLookAhead(lookAhead);
+        LRItem newItem = LRItem(ItemRule(nextSymbol, rule), type == CLR1);
+        newItem.setLookAhead(lookAhead, this->type);
         state->addItem(newItem);
         newItems++;
       }
@@ -150,13 +152,37 @@ void Automaton::verifyState(State* state ) {
   bool reducible = false;
   bool shift = false;
 
-  for (LRItem item: state->items) {
-    if (item.reducible() && reducible || item.reducible() && shift || shift && reducible) { 
-      setSlr1(true);
-    }else if(item.reducible()){
-      reducible = true;
-    }else {
-      shift = true;
+  if (type == LR0) {
+    for (LRItem item: state->items) {
+      if (item.reducible() && state->items.size() > 1) {
+        setType(SLR1);
+      }
+    }
+  } else {
+    bool error = false;
+    vector<LRItem> reducibles = vector<LRItem>();
+    for (vector<LRItem>::iterator i = state->items.begin(); i < state->items.end() && !error; i++) {
+      if (i->reducible()) {
+        if (reducibles.size() > 0) {
+          for (vector<LRItem>::iterator item = reducibles.begin(); item < reducibles.end() && !error; item++) {
+            vector<string> f1 = (type == SLR1)? grammar->getSetOfFollow(i->rule.first) : i->getLookAhead();
+            vector<string> f2 = (type == SLR1)? grammar->getSetOfFollow(item->rule.first) : item->getLookAhead();
+            for (string r: f1) {
+              error = find(f2.begin(), f2.end(), r) != f2.end();
+            }
+          }
+        }
+        reducibles.push_back(*i);
+      } else {
+        string next = i->nextSymbol();
+        for (vector<LRItem>::iterator item = reducibles.begin(); item < reducibles.end() && !error; item++) {
+          vector<string> f1 = (type == SLR1)? grammar->getSetOfFollow(item->rule.first) : item->getLookAhead();
+          error = find(f1.begin(), f1.end(), next) != f1.end();
+        }
+      }
+    }
+    if (error) {
+      setType(type+1);
     }
   }
 }

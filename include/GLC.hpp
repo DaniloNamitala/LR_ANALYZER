@@ -17,15 +17,10 @@ class GLC {
 private:
   _GLC dataSet;
   std::string initialSymbol;
-
+  std::vector<std::string> terminals;
+  std::vector<std::string> variables;
   void readDataFromFile(char* fileName);
-  
-  std::vector<std::string> findNullables();
-  std::regex createRegex(std::vector<std::string> rules, bool findTerminal = false);
-  std::vector<std::string> findChain(std::string var);
-  std::vector<std::string> findTerminals();
-  std::vector<std::string> findReachables(std::string start);
-
+  void calcTerminalsAndVariables();
   void extend();
 public:
   GLC(char* fileName); // create GLC from file
@@ -39,5 +34,9 @@ public:
   std::vector<std::string> getSetOfFirst(std::string var);
 
   std::vector<std::string> getSetOfFollow(std::string var);
+
+  std::vector<std::string> getTerminals();
+
+  std::vector<std::string> getVariables();
 };
 #endif

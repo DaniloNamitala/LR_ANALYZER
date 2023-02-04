@@ -4,8 +4,9 @@
 using namespace std;
 
 GLC::GLC(char* fileName) {
-  initialSymbol = "S";
+  initialSymbol = "";
   readDataFromFile(fileName);
+  calcTerminalsAndVariables();
   extend();
 }
 
@@ -27,6 +28,9 @@ void GLC::readDataFromFile(char* fileName) {
       if (before_arrow) {
         var = data;
       } else if (isValidRule(data)) {
+        if (dataSet.empty()) {
+          initialSymbol = var;
+        }
         dataSet[var].push_back(data);
       }
     }
@@ -34,8 +38,28 @@ void GLC::readDataFromFile(char* fileName) {
   file.close();
 }
 
+void GLC::calcTerminalsAndVariables() {
+  regex reg = regex("([A-Z]\\')|([A-Z][1-9]*)|[a-z]|\\+"); //regex para separar variaveis e terminais
+  for (auto rule : dataSet){
+    if (find(variables.begin(), variables.end(), rule.first) == variables.end())
+      variables.push_back(rule.first);
+    for (vector<string>::iterator r = rule.second.begin(); r < rule.second.end(); r++) {
+      regex_iterator<string::iterator> begin(r->begin(), r->end(), reg);
+      regex_iterator<string::iterator> end;
+      for (regex_iterator<string::iterator> i = begin; distance(i,end) > 0; i++) {
+        if (isTerminal(i->str())) {
+          if (find(terminals.begin(), terminals.end(), i->str()) == terminals.end())
+            terminals.push_back(i->str());
+        }
+      }
+    }
+  }
+  sort(terminals.begin(), terminals.end());
+  sort(variables.begin(), variables.end());
+}
+
 void GLC::extend(){
-  string newInitial = "S'";
+  string newInitial = initialSymbol + "\'";
   dataSet[newInitial].push_back(initialSymbol);
   initialSymbol = newInitial;
 }
@@ -51,6 +75,14 @@ vector<string> GLC::getRules(string variable) {
     cerr << "CANT FIND VARIABLE " << variable << " RULE\n";
     return vector<string>();
   }
+}
+
+vector<string> GLC::getTerminals() {
+  return terminals;
+}
+
+vector<string> GLC::getVariables() {
+  return variables;
 }
 
 vector<string> removeDuplicates(vector<string> v) {
