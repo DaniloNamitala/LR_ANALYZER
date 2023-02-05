@@ -1,14 +1,17 @@
 #include "../include/ParsingTable.hpp" 
 using namespace std;
 
-int ParsingTable::getIndex(vector<string> v, string K) {
-  auto it = find(v.begin(), v.end(), K);
-  if (it != v.end()){
-    int index = it - v.begin();
-    return index;
-  } else {
-    return -1;
+map<pair<string, string>, int> ParsingTable::createIndexMap(GLC* grammar) {
+  vector<string> var = grammar->getVariables();
+  map<pair<string, string>, int> result;
+  int index = 1;
+  for (string v: var) {
+    vector<string> rules = grammar->getRules(v);
+    for (string r: rules) {
+      result[pair<string, string>(v, r)] = index++;
+    }
   }
+  return result;
 }
 
 void ParsingTable::initializeTable(Automaton* automaton) {
@@ -59,6 +62,12 @@ void ParsingTable::print(Automaton* autom) {
     break;
   }
 
+  map<pair<string, string>, int> indexMap = createIndexMap(autom->grammar);
+  for (auto i: indexMap) {
+    printf("(%d): %s -> %s\n", i.second, i.first.first.c_str(), i.first.second.c_str());
+  }
+  printf("\n");
+
   printf("%-3s|", "");
   for (auto c: table[0]) {
     if (isTerminal(c.first))
@@ -89,6 +98,7 @@ void ParsingTable::print(Automaton* autom) {
 }
 
 void ParsingTable::populateTable(Automaton* automaton) {
+  map<pair<string, string>, int> indexMap = createIndexMap(automaton->grammar);
   for (State* state: automaton->states) {
     for (pair<string, State*> t: state->transitions) {
       if (isTerminal(t.first)) {
@@ -104,8 +114,8 @@ void ParsingTable::populateTable(Automaton* automaton) {
         } else {
           for (string c : getColumnsForItem(automaton, i)) {
             auto rules = automaton->grammar->getRules(i.rule.first);
-            int ruleIndex = getIndex(rules, i.rule.second);
-            table[state->id][c] = "r" + to_string(ruleIndex + 1);
+            int ruleIndex = indexMap[i.rule];
+            table[state->id][c] = "r" + to_string(ruleIndex);
           }
         }
       }
