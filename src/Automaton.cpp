@@ -92,7 +92,6 @@ void Automaton::create() {
     this->generate();
   } catch (int t) {
     if (t == CLR1) {
-      cout << "LIMPANDO \n";
       this->clear();
       try {
         generate();
