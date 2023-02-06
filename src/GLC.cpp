@@ -39,7 +39,7 @@ void GLC::readDataFromFile(char* fileName) {
 }
 
 void GLC::calcTerminalsAndVariables() {
-  regex reg = regex("([A-Z]\\')|([A-Z][1-9]*)|[a-z]|\\+"); //regex para separar variaveis e terminais
+  regex reg = regex("([A-Z]\\')|([A-Z][1-9]*)|[a-z]"); //regex para separar variaveis e terminais
   for (auto rule : dataSet){
     if (find(variables.begin(), variables.end(), rule.first) == variables.end())
       variables.push_back(rule.first);

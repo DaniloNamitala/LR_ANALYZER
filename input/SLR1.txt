@@ -1,2 +1,2 @@
-E -> T+E | T
+E -> TpE | T
 T -> n
